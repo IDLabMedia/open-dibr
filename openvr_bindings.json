@@ -1,0 +1,94 @@
+{
+   "bindings" : {
+      "/actions/demo" : {
+         "poses" : [
+            {
+               "output" : "/actions/demo/in/hand_left",
+               "path" : "/user/hand/left/pose/raw"
+            },
+            {
+               "output" : "/actions/demo/in/hand_right",
+               "path" : "/user/hand/right/pose/raw"
+            }
+         ],
+         "haptics" : [
+            {
+               "output" : "/actions/demo/out/haptic_right",
+               "path" : "/user/hand/right/output/haptic"
+            },
+            {
+               "output" : "/actions/demo/out/haptic_left",
+               "path" : "/user/hand/left/output/haptic"
+            }
+         ],
+         "sources" : [
+			{
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/demo/in/moving_z"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/left/input/trackpad"
+            },
+			{
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/demo/in/moving_xy"
+                  }
+               },
+               "mode" : "trackpad",
+               "path" : "/user/hand/right/input/trackpad"
+            },
+			{
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/demo/in/pressed_left_trackpad"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trackpad"
+            },
+			{
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/demo/in/pressed_right_trackpad"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trackpad"
+            },
+			{
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/demo/in/moving_joystick_z"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/left/input/joystick"
+            },
+			{
+               "inputs" : {
+                  "position" : {
+                     "output" : "/actions/demo/in/moving_joystick_xy"
+                  }
+               },
+               "mode" : "joystick",
+               "path" : "/user/hand/right/input/joystick"
+            },
+			{
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/demo/in/quit"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/grip"
+            }
+         ]
+      }
+   },
+   "controller_type" : "generic",
+   "description" : "Bindings for the Realtime DIBR demo for a generic controller",
+   "name" : "Realtime DIBR bindings for a generic controller"
+}

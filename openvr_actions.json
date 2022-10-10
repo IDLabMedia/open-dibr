@@ -1,0 +1,70 @@
+{
+      "default_bindings": [
+         {
+            "controller_type" : "generic",
+            "binding_url" : "hellovr_bindings_generic.json"
+         }
+      ], 
+  "actions": [
+    {
+      "name": "/actions/demo/in/Hand_Right",
+      "type": "pose"
+    },
+    {
+      "name": "/actions/demo/in/Hand_Left",
+      "type": "pose"
+    },
+    {
+      "name": "/actions/demo/out/haptic_left",
+      "type": "vibration"
+    },
+    {
+      "name": "/actions/demo/out/haptic_right",
+      "type": "vibration"
+    },
+	{
+      "name": "/actions/demo/in/moving_z",
+      "type": "vector2"
+    },
+	{
+      "name": "/actions/demo/in/moving_xy",
+      "type": "vector2"
+    },
+	{
+      "name": "/actions/demo/in/pressed_left_trackpad",
+      "type": "boolean"
+    },
+	{
+      "name": "/actions/demo/in/pressed_right_trackpad",
+      "type": "boolean"
+    },
+	{
+      "name": "/actions/demo/in/moving_joystick_z",
+      "type": "vector2"
+    },
+	{
+      "name": "/actions/demo/in/moving_joystick_xy",
+      "type": "vector2"
+    },
+	{
+      "name": "/actions/demo/in/quit",
+      "type": "boolean"
+    }
+  ],
+    "localization" : [
+        {
+            "language_tag": "en_US",
+            "/actions/demo/in/Hand_Right" : "Right Hand Pose",
+            "/actions/demo/in/Hand_Left" : "Left Hand Pose",
+            "/actions/demo/out/haptic_left" : "Left Haptic Feedback",
+            "/actions/demo/out/haptic_right" : "Right Haptic Feedback",
+			"/actions/demo/in/moving_z" : "Move forward/backward",
+			"/actions/demo/in/moving_xy" : "Move left/right/up/down",
+			"/actions/demo/in/pressed_left_trackpad" : "Move forward/backward",
+			"/actions/demo/in/pressed_right_trackpad" : "Move left/right/up/down",
+			"/actions/demo/in/moving_z" : "Move forward/backward using the joysticks",
+			"/actions/demo/in/moving_xy" : "Move left/right/up/down using the joysticks",
+			"/actions/demo/in/quit" : "Quit scene"
+        }
+    ]
+}

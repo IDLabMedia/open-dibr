@@ -1,0 +1,166 @@
+{
+    "cameras": [
+        {
+            "NameColor": "viewport",
+            "Position": [
+                0.0,
+                -0.140122,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Depth_range": [
+                0.1,
+                15.0
+            ],
+            "Resolution": [
+                2048,
+                1088
+            ],
+            "Projection": "Perspective",
+            "Focal": [
+                2410.34,
+                2410.34
+            ],
+            "Principle_point": [
+                1041.39,
+                478.78
+            ]
+        },
+		{
+            "NameColor": "v00_texture.png",
+            "NameDepth": "v00_depth.png",
+            "Position": [
+                0.0,
+                0.070822,
+                0.069605
+            ],
+            "Rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "Depth_range": [
+                1.808811,
+                5.402476
+            ],
+            "Resolution": [
+                2048,
+                1088
+            ],
+            "Projection": "Perspective",
+            "Focal": [
+                2410.34,
+                2410.34
+            ],
+            "Principle_point": [
+                1041.39,
+                478.78
+            ],
+            "BitDepthColor": 8,
+            "BitDepthDepth": 16
+        },
+        {
+            "NameColor": "v01_texture.png",
+            "NameDepth": "v01_depth.png",
+            "Position": [
+                0.0,
+                -0.138494,
+                0.068945
+            ],
+            "Rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "Depth_range": [
+                1.773514,
+                5.300389
+            ],
+            "Resolution": [
+                2048,
+                1088
+            ],
+            "Projection": "Perspective",
+            "Focal": [
+                2410.34,
+                2410.34
+            ],
+            "Principle_point": [
+                1046.43,
+                478.79
+            ],
+            "BitDepthColor": 8,
+            "BitDepthDepth": 16
+        },
+        {
+            "NameColor": "v02_texture.png",
+            "NameDepth": "v02_depth.png",
+            "Position": [
+                0.0,
+                0.070168,
+                -0.140002
+            ],
+            "Rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "Depth_range": [
+                1.807819,
+                5.399511
+            ],
+            "Resolution": [
+                2048,
+                1088
+            ],
+            "Projection": "Perspective",
+            "Focal": [
+                2410.34,
+                2410.34
+            ],
+            "Principle_point": [
+                1041.4,
+                483.83
+            ],
+            "BitDepthColor": 8,
+            "BitDepthDepth": 16
+        },
+        {
+            "NameColor": "v03_texture.png",
+            "NameDepth": "v03_depth.png",
+            "Position": [
+                0.0,
+                -0.140481,
+                -0.141201
+            ],
+            "Rotation": [
+                0.0,
+                -0.0,
+                0.0
+            ],
+            "Depth_range": [
+                1.786436,
+                5.337888
+            ],
+            "Resolution": [
+                2048,
+                1088
+            ],
+            "Projection": "Perspective",
+            "Focal": [
+                2410.34,
+                2410.34
+            ],
+            "Principle_point": [
+                1046.48,
+                483.86
+            ],
+            "BitDepthColor": 8,
+            "BitDepthDepth": 16
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "Start_frame": 0,
+	"Number_of_frames": 97,
+    "cameras": [
+        {
+            "NameColor": "example_output",
+            "Position": [
+                -2.5,
+                1.65,
+                1.45
+            ],
+            "Rotation": [
+                -33.9126,
+                7.7346,
+                0.0
+            ],
+			"Resolution": [
+                1920,
+                1080
+            ],
+            "Projection": "Perspective",
+            "Focal": [
+                2058.73,
+                2058.73
+            ],
+            "Principle_point": [
+                960,
+                540
+            ]
+        }
+    ]
+}
