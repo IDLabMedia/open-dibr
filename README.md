@@ -34,8 +34,8 @@ The following build instructions were tested on Windows 10 and Ubuntu 18.04 LTS:
 
 Clone the repository:
 ```
-git clone TODO
-cd TODO
+git clone open-dibr
+cd open-dibr
 git submodule update --init --recursive
 ```
 Use CMake to build the project:
