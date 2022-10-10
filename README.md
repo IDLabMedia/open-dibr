@@ -4,8 +4,8 @@ This **Open Realtime Depth-Image-Based Renderer (OpenDIBR)** takes a **multi-vie
 Real-time performance is achieved through several optimizations, including the use of **CUDA, OpenGL and the NVidia Video Codec SDK**.
 For the VR experience, the **OpenVR SDK** and **SteamVR** are used.
 
-<img src="https://github.com/jlartois/dibr/blob/main/docs/group_posetrace.gif" width="49%"/> <img src="https://github.com/jlartois/dibr/blob/main/docs/painter_posetrace.gif" width="49%"/> 
-<img src="https://github.com/jlartois/dibr/blob/main/docs/zen_garden_vr.gif" width="49%"/> <img src="https://github.com/jlartois/dibr/blob/main/docs/Barbershop_mirror_posetrace_dibr.gif" width="49%"/>
+<img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/group_posetrace.gif" width="49%"/> <img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/painter_posetrace.gif" width="49%"/> 
+<img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/zen_garden_vr.gif" width="49%"/> <img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/Barbershop_mirror_posetrace_dibr.gif" width="49%"/>
 
 ## Dependencies
 - A C++11 capable compiler. The following options have been tested:
@@ -45,14 +45,14 @@ cmake --build bin --config Release
 ```
 If the build was succesful, you now have an executable. 
 
-Read [Running the Application](https://github.com/jlartois/dibr/wiki/Running-the-application) for a detailed overview of **how to run and use the application**. It also has a section on [Common Problems (scroll down)](https://github.com/jlartois/dibr/wiki/Running-the-application) that you might run into.
+Read [Running the Application](https://github.com/IDLabMedia/open-dibr/wiki/Running-the-application) for a detailed overview of **how to run and use the application**. It also has a section on [Common Problems (scroll down)](https://github.com/IDLabMedia/open-dibr/wiki/Running-the-application) that you might run into.
 
-Read [Light field datasets](https://github.com/jlartois/dibr/wiki/Light-field-datasets) to **download existing light field datasets or adapt your own** to use as input for the application.
+Read [Light field datasets](https://github.com/IDLabMedia/open-dibr/wiki/Light-field-datasets) to **download existing light field datasets or adapt your own** to use as input for the application.
 
-<img src="https://github.com/jlartois/dibr/blob/main/docs/overview_mpegi_datasets.png" /> 
-<img src="https://github.com/jlartois/dibr/blob/main/docs/overview_idlab_datasets.png" /> 
+<img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/overview_mpegi_datasets.png" /> 
+<img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/overview_idlab_datasets.png" /> 
 
-A paper on this software tool is currently being written/evaluated. Instructions on how to **replicate the results from the paper** can be found [here](https://github.com/jlartois/dibr/wiki/Replicating-results-from-paper).
+A paper on this software tool is currently being written/evaluated. Instructions on how to **replicate the results from the paper** can be found [here](https://github.com/IDLabMedia/open-dibr/wiki/Replicating-results-from-paper).
 
 
 ## Cite us
