@@ -228,21 +228,6 @@ bool VRApplication::HandleUserInput()
 				shaders.shader.use();
 				shaders.shader.setFloat("blendingThreshold", 0.001f + options.blendingFactor * 0.004f);
 			}
-			// TODO restore?
-			/*else if (sdlEvent.key.keysym.sym == SDLK_h)
-			{
-				options.max_triangle_size += 0.01f;
-				std::cout << "changed max_triangle_size to " << options.max_triangle_size << std::endl;
-				shaders.shader.use();
-				shaders.shader.setFloat("max_triangle_size", options.max_triangle_size);
-			}
-			else if (sdlEvent.key.keysym.sym == SDLK_g)
-			{
-				options.max_triangle_size = std::max(options.max_triangle_size - 0.01f, 0.005f);
-				std::cout << "changed max_triangle_size to " << options.max_triangle_size << std::endl;
-				shaders.shader.use();
-				shaders.shader.setFloat("max_triangle_size", options.max_triangle_size);
-			}*/
 			else if (sdlEvent.key.keysym.sym == SDLK_h)
 			{
 				options.triangle_deletion_margin += 2;

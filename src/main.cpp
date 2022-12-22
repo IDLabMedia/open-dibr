@@ -55,8 +55,7 @@ public:
 	bool asap = false;              // this will (decode and) play the video frames as fast as possible
 
 	// some tunable shader uniforms:
-	float max_triangle_size = 0.05f;               // triangles with a circumferences larger than this value will be discarded
-	float triangle_deletion_margin = 10.0f;        // TODO
+	float triangle_deletion_margin = 10.0f;        // used in geometry shader for the threshold for stretched triangle deletion
 	float depth_diff_threshold_fragment = 0.05f;   // threshold used in geometry shader to determine which elongated triangles should be deleted
 												   // for now fixed at 0.05m
 	float image_border_threshold_fragment = 0.0f;  // used in fragment shader, expressed in nr pixels
@@ -90,7 +89,7 @@ public:
 			("max_nr_inputs", "The maximum number of input images/videos that will be processed per frame (-1 if all need to be processed)", cxxopts::value<int>()->default_value("-1"))
 			("show_inputs", "This setting will display the positions and rotations of the input and output cameras on screen, as well as which inputs are used to render the current frame.")
 			("mesh_subdivisions", "The detail level of the triangle meshes, full resolution if 0, 1/2 resolution if 1, 1/3 resolution if 2, etc. Must lie in [0,5]", cxxopts::value<int>()->default_value("0"))
-			("target_fps", "The target fps in case of video outputs. Needs to be a multiple of 30, which is the assumed framerate of the videos.", cxxopts::value<int>()->default_value("90"))
+			("target_fps", "The target application fps in case of video inputs. Needs to be a multiple of 30, which is the assumed framerate of the videos.", cxxopts::value<int>()->default_value("90"))
 			;
 		options.add_options("Saving to disk")
 			// save to disk
@@ -100,7 +99,6 @@ public:
 			;
 		options.add_options("Settings to improve quality")
 			("blending_factor", "The higher this factor, the more blending between inputs there is, as an int in [0,10]", cxxopts::value<int>()->default_value("1"))
-			("max_triangle_size", "Triangles with a circumferences larger than this value will be discarded. It uses the same metric as the depth map. Note that this threshold loosens up for larger depth values, where the depth map is less accurate.", cxxopts::value<float>()->default_value("0.05"))
 			("triangle_deletion_margin", "The higher this value, the less strict the threshold for deletion of stretched triangles.", cxxopts::value<float>()->default_value("10.0"))
 			;
 		options.add_options("Output camera settings")
@@ -184,13 +182,6 @@ public:
 			blendingFactor = result["blending_factor"].as<int>();
 			if (blendingFactor < 0 || blendingFactor > 10) {
 				std::cout << "Option --blending_factor should be an int in [0,10]" << std::endl;
-				exit(-1);
-			}
-		}
-		if (result.count("max_triangle_size")) {
-			max_triangle_size = result["max_triangle_size"].as<float>();
-			if (max_triangle_size < 0.005f) {
-				std::cout << "Option --max_triangle_size should be at least 0.005" << std::endl;
 				exit(-1);
 			}
 		}

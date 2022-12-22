@@ -53,22 +53,11 @@ public:
 		shader.setFloat("chroma_offset", chroma_offset);
 
 		
-		// TODO reset?
-		// TODO and geometry.fs??
-		shader.setFloat("max_triangle_size", options.max_triangle_size);
-
 		float max_error_x = 1.0f / (1.0f / input.z_far + 0.5f / (std::pow(2, input.bitdepth_depth) - 1.0f) * (1.0f / input.z_near - 1.0f / input.z_far));
 		float max_error = std::abs(1.0f / (1.0f / input.z_far) - max_error_x);
-		float a = max_error / std::pow(max_error_x - input.z_near, 2);
-		std::cout << "near = " << input.z_near << std::endl;
-		std::cout << "far = " << input.z_far << std::endl;
-		std::cout << "bitdepth_depth = " << input.bitdepth_depth << std::endl;
-		std::cout << "max_error_x = " << max_error_x << std::endl;
-		std::cout << "max_error = " << max_error << std::endl;
-		std::cout << "a = " << a << std::endl;
-		shader.setFloat("a", a);
+		float triangle_deletion_factor = max_error / std::pow(max_error_x - input.z_near, 2);
+		shader.setFloat("triangle_deletion_factor", triangle_deletion_factor);
 		shader.setFloat("triangle_deletion_margin", options.triangle_deletion_margin);
-
 
 		shader.setFloat("depth_diff_threshold_fragment", options.depth_diff_threshold_fragment);
 		shader.setFloat("image_border_threshold_fragment", options.image_border_threshold_fragment);
