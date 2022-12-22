@@ -72,7 +72,8 @@ bool PCApplication::HandleUserInput()
 				shaders.shader.use();
 				shaders.shader.setFloat("blendingThreshold", 0.001f + options.blendingFactor * 0.004f);
 			}
-			else if (sdlEvent.key.keysym.sym == SDLK_h)
+			// TODO restore?
+			/*else if (sdlEvent.key.keysym.sym == SDLK_h)
 			{
 				options.max_triangle_size += 0.01f;
 				std::cout << "changed max_triangle_size to " << options.max_triangle_size << std::endl;
@@ -85,6 +86,20 @@ bool PCApplication::HandleUserInput()
 				std::cout << "changed max_triangle_size to " << options.max_triangle_size << std::endl;
 				shaders.shader.use();
 				shaders.shader.setFloat("max_triangle_size", options.max_triangle_size);
+			}*/
+			else if (sdlEvent.key.keysym.sym == SDLK_h)
+			{
+				options.triangle_deletion_margin += 2;
+				std::cout << "changed triangle_deletion_margin to " << options.triangle_deletion_margin << std::endl;
+				shaders.shader.use();
+				shaders.shader.setFloat("triangle_deletion_margin", options.triangle_deletion_margin);
+			}
+			else if (sdlEvent.key.keysym.sym == SDLK_g)
+			{
+				options.triangle_deletion_margin = std::max(options.triangle_deletion_margin - 2, 1.0f);
+				std::cout << "changed triangle_deletion_margin to " << options.triangle_deletion_margin << std::endl;
+				shaders.shader.use();
+				shaders.shader.setFloat("triangle_deletion_margin", options.triangle_deletion_margin);
 			}
 			else if (options.showCameraVisibilityWindow && sdlEvent.key.keysym.sym == SDLK_r) {
 				controlCameraVisibilityWindow = !controlCameraVisibilityWindow;
@@ -191,15 +206,16 @@ bool PCApplication::HandleUserInput()
 
 	if (movement != glm::vec3(0) || rotation != glm::vec3(0)) {
 
-		accumMovement += movement;
 		accumRotation += rotation;
 		glm::mat4 inputRx = glm::rotate(glm::mat4(1.0f), accumRotation[0], glm::vec3(1.0f, 0.0f, 0.0f));
 		glm::mat4 inputRy = glm::rotate(glm::mat4(1.0f), accumRotation[1], glm::vec3(0.0f, 1.0f, 0.0f));
 		glm::mat4 inputRz = glm::rotate(glm::mat4(1.0f), accumRotation[2], glm::vec3(0.0f, 0.0f, 1.0f));
 		glm::mat4 rotMat = inputRz * inputRy * inputRx;
-		pcOutputCamera.model = pcOutputCamera.startModel * rotMat;
-		pcOutputCamera.model = glm::translate(pcOutputCamera.model, accumMovement);
+		accumMovement += glm::mat3(pcOutputCamera.startRotMat * rotMat) * movement;
+		glm::mat4 posMat = glm::translate(glm::mat4(1.0f), pcOutputCamera.pos + accumMovement);
+		pcOutputCamera.model = posMat * pcOutputCamera.startRotMat * rotMat;
 		pcOutputCamera.view = glm::inverse(pcOutputCamera.model);
+
 	}
 
 	return bRet;

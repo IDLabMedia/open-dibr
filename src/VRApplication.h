@@ -18,7 +18,7 @@ public:
 	void Shutdown();
 
 	bool HandleUserInput();
-	bool RenderFrame(bool nextVideoFrame, bool updateCurrentInputsToUse, std::string outputCameraName = "", int frameNr = 0);
+	bool RenderFrame(bool nextVideoFrame, std::string outputCameraName = "", int frameNr = 0);
 
 	void SetupCameras();
 	bool SetupStereoRenderTargets();
@@ -228,7 +228,8 @@ bool VRApplication::HandleUserInput()
 				shaders.shader.use();
 				shaders.shader.setFloat("blendingThreshold", 0.001f + options.blendingFactor * 0.004f);
 			}
-			else if (sdlEvent.key.keysym.sym == SDLK_h)
+			// TODO restore?
+			/*else if (sdlEvent.key.keysym.sym == SDLK_h)
 			{
 				options.max_triangle_size += 0.01f;
 				std::cout << "changed max_triangle_size to " << options.max_triangle_size << std::endl;
@@ -241,6 +242,20 @@ bool VRApplication::HandleUserInput()
 				std::cout << "changed max_triangle_size to " << options.max_triangle_size << std::endl;
 				shaders.shader.use();
 				shaders.shader.setFloat("max_triangle_size", options.max_triangle_size);
+			}*/
+			else if (sdlEvent.key.keysym.sym == SDLK_h)
+			{
+				options.triangle_deletion_margin += 2;
+				std::cout << "changed triangle_deletion_margin to " << options.triangle_deletion_margin << std::endl;
+				shaders.shader.use();
+				shaders.shader.setFloat("triangle_deletion_margin", options.triangle_deletion_margin);
+			}
+			else if (sdlEvent.key.keysym.sym == SDLK_g)
+			{
+				options.triangle_deletion_margin = std::max(options.triangle_deletion_margin - 2, 1.0f);
+				std::cout << "changed triangle_deletion_margin to " << options.triangle_deletion_margin << std::endl;
+				shaders.shader.use();
+				shaders.shader.setFloat("triangle_deletion_margin", options.triangle_deletion_margin);
 			}
 			else if (options.showCameraVisibilityWindow && sdlEvent.key.keysym.sym == SDLK_r) {
 				controlCameraVisibilityWindow = !controlCameraVisibilityWindow;
@@ -370,12 +385,12 @@ bool VRApplication::HandleUserInput()
 	return bRet;
 }
 
-bool VRApplication::RenderFrame(bool nextVideoFrame, bool updateCurrentInputsToUse, std::string outputCameraName, int frameNr)
+bool VRApplication::RenderFrame(bool nextVideoFrame, std::string outputCameraName, int frameNr)
 {
 	bool shouldUpdateUsedInputs = false;
 	if (m_pHMD)
 	{
-		shouldUpdateUsedInputs = RenderTarget(nextVideoFrame, updateCurrentInputsToUse);
+		shouldUpdateUsedInputs = RenderTarget(nextVideoFrame);
 		RenderCompanionWindow();
 
 		vr::Texture_t leftEyeTexture = {(void*)(uintptr_t)framebuffers.getColorTexture(vr::Eye_Left), vr::TextureType_OpenGL, vr::ColorSpace_Gamma};
@@ -592,7 +607,7 @@ glm::mat4 VRApplication::GetHMDMatrixProjectionEye(vr::Hmd_Eye nEye)
 	if (!m_pHMD)
 		return glm::mat4(0);
 
-	vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(nEye, options.SCR_NEAR_FAR[0], options.SCR_NEAR_FAR[1]);
+	vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(nEye, pcOutputCamera.z_near, pcOutputCamera.z_far);
 
 	return glm::mat4(
 		mat.m[0][0], mat.m[1][0], mat.m[2][0], mat.m[3][0],

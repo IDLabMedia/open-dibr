@@ -221,6 +221,8 @@ public:
 		model = viewport.model;
 		view = viewport.view;
 		projection = viewport.projection;
+		z_near = 0.1f;
+		z_far = 1020.0f;
 	}
 
 	OutputCamera(nlohmann::json params) {
@@ -293,7 +295,7 @@ public:
 	}
 };
 
-bool readInputJson(std::string inputJsonPath, std::string directory, /*out*/ OutputCamera& viewport, std::vector<InputCamera>& inputCameras) {
+bool readInputJson(std::string inputJsonPath, std::string directory, bool findViewport, /*out*/ OutputCamera& viewport, std::vector<InputCamera>& inputCameras) {
 	std::ifstream file;
 	file.open(inputJsonPath, std::ios::in);
 	if (!file){
@@ -331,7 +333,9 @@ bool readInputJson(std::string inputJsonPath, std::string directory, /*out*/ Out
 			return false;
 		}
 		if (name == "viewport") {
-			viewport = OutputCamera(j["cameras"][i]);
+			if (findViewport) {
+				viewport = OutputCamera(j["cameras"][i]);
+			}
 			foundViewport = true;
 		}
 		else {
@@ -340,7 +344,7 @@ bool readInputJson(std::string inputJsonPath, std::string directory, /*out*/ Out
 	}
 	j.clear();
 
-	if (!foundViewport) {
+	if (findViewport && !foundViewport) {
 		std::cout << "The input JSON file should contain a camera named \'viewport\'." << std::endl;
 		return false;
 	}
@@ -403,7 +407,7 @@ void saveImage(unsigned char* image, int width, int height, bool saveAsPNG, int 
 		try {
 			stbi_flip_vertically_on_write(1);
 			stbi_write_png(outputPath.c_str(), width, height, 4, image, width * 4);
-			std::cout << "wrote to " << outputPath << std::endl;
+			std::cout << "wrote PNG to " << outputPath << std::endl;
 		}
 		catch (const std::exception & e) {
 			std::cout << "could not write to " << outputPath << std::endl;
@@ -422,7 +426,7 @@ void saveImage(unsigned char* image, int width, int height, bool saveAsPNG, int 
 			}
 		}
 
-		std::cout << "writing frame " << frameNr << " to " << outputPath << std::endl;
+		std::cout << "writing YUV444p frame " << frameNr << " to " << outputPath << std::endl;
 		std::fstream stream(outputPath, frameNr == 0 ? std::ios::out | std::ios::binary : std::ios::in | std::ios::out | std::ios::binary);
 		if (stream.good()) {
 			stream.seekp(frameNr * 3 * width * height);

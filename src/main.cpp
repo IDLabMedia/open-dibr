@@ -32,9 +32,7 @@ public:
 
 	unsigned int SCR_WIDTH = 1920;                    // width in pixels of the SDL window
 	unsigned int SCR_HEIGHT = 1080;                   // height in pixels of the SDL window
-	//glm::vec2 SCR_F = glm::vec2(960.0f, 960.0f);      // focal length in pixels of the SDL window
-	//glm::vec2 SCR_PP = glm::vec2(960.0f, 540.0f);     // principal point in pixels of the SDL window
-	//glm::vec2 SCR_NEAR_FAR = glm::vec2(0.1f, 1020.0f); // distance to near and far planes in meter
+
 	glm::vec3 backgroundColor = glm::vec3(0.5f, 0.5f, 0.5f); // glClearColor
 
 	bool saveOutputImages = false;  // if true, the output cameras from the "inputJsonPath" file are rendered one by one and the results are saved to disk as .yuv files
@@ -58,6 +56,7 @@ public:
 
 	// some tunable shader uniforms:
 	float max_triangle_size = 0.05f;               // triangles with a circumferences larger than this value will be discarded
+	float triangle_deletion_margin = 10.0f;        // TODO
 	float depth_diff_threshold_fragment = 0.05f;   // threshold used in geometry shader to determine which elongated triangles should be deleted
 												   // for now fixed at 0.05m
 	float image_border_threshold_fragment = 0.0f;  // used in fragment shader, expressed in nr pixels
@@ -91,6 +90,7 @@ public:
 			("max_nr_inputs", "The maximum number of input images/videos that will be processed per frame (-1 if all need to be processed)", cxxopts::value<int>()->default_value("-1"))
 			("show_inputs", "This setting will display the positions and rotations of the input and output cameras on screen, as well as which inputs are used to render the current frame.")
 			("mesh_subdivisions", "The detail level of the triangle meshes, full resolution if 0, 1/2 resolution if 1, 1/3 resolution if 2, etc. Must lie in [0,5]", cxxopts::value<int>()->default_value("0"))
+			("target_fps", "The target fps in case of video outputs. Needs to be a multiple of 30, which is the assumed framerate of the videos.", cxxopts::value<int>()->default_value("90"))
 			;
 		options.add_options("Saving to disk")
 			// save to disk
@@ -101,6 +101,7 @@ public:
 		options.add_options("Settings to improve quality")
 			("blending_factor", "The higher this factor, the more blending between inputs there is, as an int in [0,10]", cxxopts::value<int>()->default_value("1"))
 			("max_triangle_size", "Triangles with a circumferences larger than this value will be discarded. It uses the same metric as the depth map. Note that this threshold loosens up for larger depth values, where the depth map is less accurate.", cxxopts::value<float>()->default_value("0.05"))
+			("triangle_deletion_margin", "The higher this value, the less strict the threshold for deletion of stretched triangles.", cxxopts::value<float>()->default_value("10.0"))
 			;
 		options.add_options("Output camera settings")
 			// output camera
@@ -158,11 +159,6 @@ public:
 
 		if (result.count("max_nr_inputs")) {
 			maxNrInputsUsed = result["max_nr_inputs"].as<int>();
-			if (saveOutputImages && maxNrInputsUsed < inputCameras.size()) {
-				std::cout << "Error: --max_nr_inputs " << maxNrInputsUsed << " is lower than the number of input cameras in the JSON file (="<< inputCameras.size()<<"), which is not supported "
-					<< "when -p or --output_json and -o or --output_dir are specified." << std::endl;
-				exit(-1);
-			}
 			if (maxNrInputsUsed < 1) {
 				maxNrInputsUsed = (int)inputCameras.size();
 			}
@@ -198,6 +194,22 @@ public:
 				exit(-1);
 			}
 		}
+		if (result.count("triangle_deletion_margin")) {
+			triangle_deletion_margin = result["triangle_deletion_margin"].as<float>();
+			if (triangle_deletion_margin < 1) {
+				std::cout << "Option --triangle_deletion_margin should be at least 1" << std::endl;
+				exit(-1);
+			}
+		}
+		//target_fps
+		if (result.count("target_fps")) {
+			targetFps = result["target_fps"].as<int>();
+			if (targetFps < 30 || (targetFps % 30 != 0)) {
+				std::cout << "Option --targetFps should be a multiple of 30" << std::endl;
+				exit(-1);
+			}
+		}
+
 		if (result.count("t")) {
 			if (isStatic) {
 				std::cout << "Option --t is ignored when the input dataset contains PNGs or --static is provided" << std::endl;
@@ -331,20 +343,13 @@ private:
 			}
 		}
 		// read in inputJsonPath
-		if (!readInputJson(inputJsonPath, inputPath, /*out*/ viewport, inputCameras)) {
+		if (!readInputJson(inputJsonPath, inputPath, outputJsonPath == "", /*out*/ viewport, inputCameras)) {
 			return false;
 		}
 		if (inputCameras.size() == 0) {
 			std::cout << "Error: the JSON did not contain any input cameras" << std::endl;
 			return false;
 		}
-		SCR_WIDTH = viewport.res_x;
-		SCR_HEIGHT = viewport.res_y;
-		if (SCR_WIDTH < 1 || SCR_WIDTH > 8192 || SCR_HEIGHT < 1 || SCR_HEIGHT > 8192) {
-			std::cout << "Error: --width and --height need to be within [1, 8192]" << std::endl;
-			return false;
-		}
-
 		if (outputJsonPath != "") {
 			// read in outputJsonPath
 			if (!readOutputJson(outputJsonPath, /*out*/outputCameras, StartingFrameNr, outputNrFrames)) {
@@ -354,7 +359,15 @@ private:
 				std::cout << "Error: the output JSON did not contain any output cameras" << std::endl;
 				return false;
 			}
+			viewport = outputCameras[0];
 		}
+		SCR_WIDTH = viewport.res_x;
+		SCR_HEIGHT = viewport.res_y;
+		if (SCR_WIDTH < 1 || SCR_WIDTH > 8192 || SCR_HEIGHT < 1 || SCR_HEIGHT > 8192) {
+			std::cout << "Error: --width and --height need to be within [1, 8192]" << std::endl;
+			return false;
+		}
+
 		// check if .mp4 or .png files are provided, and if all inputs have the same type
 		std::string inputFileType = inputCameras[0].pathColor.substr(inputCameras[0].pathColor.size() - 3, 3);
 		for (InputCamera input : inputCameras) {

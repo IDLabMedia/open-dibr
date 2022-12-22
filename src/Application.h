@@ -62,7 +62,7 @@ public:
 
 	void RunMainLoop();
 	virtual bool HandleUserInput();
-	virtual bool RenderFrame(bool nextVideoFrame, bool updateCurrentInputsToUse, std::string outputCameraName = "", int frameNr = 0);
+	virtual bool RenderFrame(bool nextVideoFrame, std::string outputCameraName = "", int frameNr = 0);
 
 	virtual void SetupCameras();
 	virtual bool SetupStereoRenderTargets();
@@ -72,12 +72,12 @@ public:
 	void SetupCUgraphicsResources();
 	bool SetupDecodingPool();
 
-	bool RenderTarget(bool nextVideoFrame, bool updateCurrentInputsToUse);
+	bool RenderTarget(bool nextVideoFrame);
 	virtual void RenderCompanionWindow();
 	virtual void RenderScene(int i, bool isFirstInput);
 
 	bool CreateAllShaders(float chroma_offset);
-	void SaveCompanionWindowToYUV(int frameNr, std::string filename);
+	void SaveCompanionWindowToYUV(int frameNr, std::string filename, bool saveAsPNG = false);
 
 protected:
 
@@ -314,7 +314,6 @@ void Application::RunMainLoop()
 	SDL_StartTextInput();
 
 	int frame = 0;
-	bool updateUsedInputs = true;
 
 	if (!options.asap) {
 		// decode and play the images/videos at options.targetFps fps
@@ -324,8 +323,9 @@ void Application::RunMainLoop()
 		Uint64 startTime = SDL_GetPerformanceCounter();
 		while (!bQuit)
 		{
+
 			// update the video frame (goal = 30Hz)
-			updateUsedInputs = RenderFrame(true, updateUsedInputs);
+			RenderFrame(true);
 			bQuit = bQuit | HandleUserInput();
 
 			SpinUntilTargetTime(startTime, ms_per_frame);
@@ -337,7 +337,7 @@ void Application::RunMainLoop()
 			// keep rendering with the same video frame (goal = options.targetFps)
 			for (int i = 0; i < options.targetFps / 30 - 1; i++) {
 				Uint64 currentTime = SDL_GetPerformanceCounter();
-				RenderFrame(false, false);
+				RenderFrame(false);
 				bQuit = bQuit | HandleUserInput();
 				SpinUntilTargetTime(currentTime, ms_per_frame);
 
@@ -354,7 +354,13 @@ void Application::RunMainLoop()
 			for (int i = 0; i < outputCameras.size(); i++) {
 				pcOutputCamera = outputCameras[i];
 
-				updateUsedInputs = RenderFrame(frame > 0 && i == 0, false, outputCameras[i].name, frame);
+				cameraVisibilityHelper.init(inputCameras, &pcOutputCamera, options.maxNrInputsUsed);
+				current_inputsToUse = cameraVisibilityHelper.updateInputsToUse();
+				for (auto& c : current_inputsToUse) {
+					next_inputsToUse.insert(c); // deep copy
+				}
+
+				RenderFrame(frame > 0 && i == 0, outputCameras[i].name, frame);
 			}
 		}
 	}
@@ -362,7 +368,7 @@ void Application::RunMainLoop()
 		// decode and play the input videos as fast as possible
 		Uint64 startTime = SDL_GetPerformanceCounter();
 		while (!bQuit) {
-			updateUsedInputs = RenderFrame(true, updateUsedInputs);
+			RenderFrame(true);
 			bQuit = bQuit | HandleUserInput();
 
 			Uint64 endTime = SDL_GetPerformanceCounter();
@@ -373,13 +379,12 @@ void Application::RunMainLoop()
 		}
 	}
 
-
 	SDL_StopTextInput();
 }
 
-bool Application::RenderFrame(bool nextVideoFrame, bool updateCurrentInputsToUse, std::string outputCameraName, int frameNr)
+bool Application::RenderFrame(bool nextVideoFrame, std::string outputCameraName, int frameNr)
 {
-	bool shouldUpdateUsedInputs = RenderTarget(nextVideoFrame, updateCurrentInputsToUse);
+	RenderTarget(nextVideoFrame);
 	if (outputCameraName != "") {
 		SaveCompanionWindowToYUV(frameNr, outputCameraName);
 	}
@@ -399,7 +404,7 @@ bool Application::RenderFrame(bool nextVideoFrame, bool updateCurrentInputsToUse
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	return shouldUpdateUsedInputs;
+	return true;
 }
 
 bool Application::CreateAllShaders(float chroma_offset)
@@ -409,8 +414,6 @@ bool Application::CreateAllShaders(float chroma_offset)
 
 void Application::SetupCameras()
 {
-	// TODO works?
-	//pcOutputCamera = OutputCamera(inputCameras[inputCameras.size() / 2], options.SCR_WIDTH, options.SCR_HEIGHT, options.SCR_F, options.SCR_PP, options.SCR_NEAR_FAR);
 	pcOutputCamera = options.viewport;
 
 	cameraVisibilityHelper.init(inputCameras, &pcOutputCamera, options.maxNrInputsUsed);
@@ -636,7 +639,7 @@ bool Application::SetupDecodingPool() {
 	return true;
 }
 
-bool Application::RenderTarget(bool nextVideoFrame, bool updateCurrentInputsToUse)
+bool Application::RenderTarget(bool nextVideoFrame)
 {
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_nRenderWidth, m_nRenderHeight);
@@ -651,10 +654,6 @@ bool Application::RenderTarget(bool nextVideoFrame, bool updateCurrentInputsToUs
 				break;
 			}
 		}
-		/*for (int i : current_inputsToUse) {
-			std::cout << i << " ";
-		}
-		std::cout << std::endl;*/
 	}
 
 	bool isFirstInput = true;
@@ -698,7 +697,7 @@ bool Application::RenderTarget(bool nextVideoFrame, bool updateCurrentInputsToUs
 		}
 	}
 
-	return shouldUpdateUsedInputs;
+	return true;
 }
 
 void Application::RenderScene(int i, bool isFirstInput)
@@ -757,11 +756,11 @@ void Application::RenderCompanionWindow()
 	}
 }
 
-void Application::SaveCompanionWindowToYUV(int frameNr, std::string outputCameraName) {
+void Application::SaveCompanionWindowToYUV(int frameNr, std::string outputCameraName, bool saveAsPNG) {
 	unsigned char* image = new unsigned char[options.SCR_WIDTH * options.SCR_HEIGHT * 4];
 	framebuffers.bindCurrentBuffer();
 	glReadPixels(0, 0, options.SCR_WIDTH, options.SCR_HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	if (options.usePNGs) {
+	if (saveAsPNG || options.usePNGs) {
 		saveImage(image, options.SCR_WIDTH, options.SCR_HEIGHT, true, frameNr, options.outputPath + outputCameraName + ".png");
 	}
 	else {

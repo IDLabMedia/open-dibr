@@ -45,7 +45,7 @@ public:
 				radius = r;
 			}
 		}
-		radius *= 5.0f;
+		radius *= 3.0f;
 
 	}
 
@@ -117,6 +117,7 @@ private:
 		float y_top = std::tan(FOV_y / 2.0f);
 		float y_bottom = -y_top;
 
+		pointsThatShouldBeSeen.clear();
 		pointsThatShouldBeSeen.push_back(glm::vec4(0, 0, -depth, 1)); // forward
 		pointsThatShouldBeSeen.push_back(glm::vec4(x_left * depth, y_top * depth, -depth, 1));     // top left
 		pointsThatShouldBeSeen.push_back(glm::vec4(x_right * depth, y_bottom * depth, -depth, 1)); // bottom right 
@@ -180,6 +181,8 @@ private:
 	}
 
 	void updateInputsToUseByViewingAngles() {
+
+
 		inputsToUse.clear();
 		// fill anglesToForwardPoint with the (cosine of the) angle between vectors PO and PI
 		// with P = forward point pointsThatShouldBeSeen[0], O = OutputCamera, I = InputCamera
@@ -223,6 +226,8 @@ private:
 					best_index = std::get<1>(angle_index_tuple);
 				}
 			}
+
+
 			if (!foundInputCameraThatSeesP && best_index != -1) {
 				// use the InputCamera that is closest to beeing able to see the point
 				inputsToUse.insert(best_index);
@@ -248,7 +253,8 @@ private:
 		std::iota(indices.begin(), indices.end(), 0); // init indices = {0, 1, 2, ..., N}
 		// sort indices from smallest to largest distance between InputCamera[index] and OutputCamera
 		std::sort(indices.begin(), indices.end(), [this](int a, int b) {
-			return glm::length(inputCameras[a].pos - outputCamera->pos) < glm::length(inputCameras[b].pos - outputCamera->pos);
+			glm::vec3 outputPos = glm::vec3(outputCamera->model[3]);
+			return glm::length(inputCameras[a].pos - outputPos) < glm::length(inputCameras[b].pos - outputPos);
 		});
 		for (int i = 0; i < maxNrInputsUsed; i++) {
 			inputsToUse.insert(indices[i]);
