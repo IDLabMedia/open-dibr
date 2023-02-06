@@ -49,7 +49,9 @@ Read [Running the Application](https://github.com/IDLabMedia/open-dibr/wiki/Runn
 
 Read [Light field datasets](https://github.com/IDLabMedia/open-dibr/wiki/Light-field-datasets) to **download existing light field datasets or adapt your own** to use as input for the application.
 
+Licensed datasets provided by the MPEG-I community:
 <img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/overview_mpegi_datasets.png" /> 
+Datasets provided by IDLAB:
 <img src="https://github.com/IDLabMedia/open-dibr/blob/main/docs/overview_idlab_datasets.png" /> 
 
 A paper on this software tool is currently being written/evaluated. Instructions on how to **replicate the results from the paper** can be found [here](https://github.com/IDLabMedia/open-dibr/wiki/Replicating-results-from-paper).
