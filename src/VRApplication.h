@@ -110,7 +110,7 @@ bool VRApplication::BInit()
 	}
 
 	// Setup the desired input from the handheld VR controllers
-	if (vr::VRInput()->SetActionManifestPath((cmakelists_dir + "/hellovr_actions.json").c_str())) {
+	if (vr::VRInput()->SetActionManifestPath((cmakelists_dir + "/openvr_actions.json").c_str())) {
 		std::cout << "VRInput()->SetActionManifestPath failed." << std::endl;
 	}
 

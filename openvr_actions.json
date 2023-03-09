@@ -2,7 +2,7 @@
       "default_bindings": [
          {
             "controller_type" : "generic",
-            "binding_url" : "hellovr_bindings_generic.json"
+            "binding_url" : "openvr_bindings.json"
          }
       ], 
   "actions": [

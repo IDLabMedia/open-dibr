@@ -30,7 +30,7 @@ bool PCApplication::BInitGL()
 	return true;
 }
 
-bool PCApplication::HandleUserInput()
+bool PCApplication::HandleUserInput() 
 {
 	SDL_Event sdlEvent;
 	bool bRet = false;
