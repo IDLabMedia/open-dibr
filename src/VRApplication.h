@@ -27,7 +27,7 @@ public:
 	void RenderCompanionWindow();
 	void RenderScene(int i, bool isFirstInput);
 
-	glm::mat4 GetHMDMatrixProjectionEye(vr::Hmd_Eye nEye);
+	glm::mat4 GetHMDMatrixProjectionEye(vr::Hmd_Eye nEye, float z_near, float z_far);
 	glm::mat4 GetHMDMatrixPoseEye(vr::Hmd_Eye nEye);
 	void UpdateHMDMatrixPose(glm::mat4& poseMat);
 	glm::mat4 ConvertSteamVRMatrixToGlmMatrix(const vr::HmdMatrix34_t& matPose);
@@ -408,9 +408,12 @@ bool VRApplication::RenderFrame(bool nextVideoFrame, std::string outputCameraNam
 
 void VRApplication::SetupCameras()
 {
+	float z_near = 0.01f;
+	float z_far = 1010.0f;
+
 	// VR output camera: projection and eye pos matrices
-	m_mat4ProjectionLeft = GetHMDMatrixProjectionEye(vr::Eye_Left) * GetHMDMatrixPoseEye(vr::Eye_Left);
-	m_mat4ProjectionRight = GetHMDMatrixProjectionEye(vr::Eye_Right) * GetHMDMatrixPoseEye(vr::Eye_Right);
+	m_mat4ProjectionLeft = GetHMDMatrixProjectionEye(vr::Eye_Left, z_near, z_far) * GetHMDMatrixPoseEye(vr::Eye_Left);
+	m_mat4ProjectionRight = GetHMDMatrixProjectionEye(vr::Eye_Right, z_near, z_far) * GetHMDMatrixPoseEye(vr::Eye_Right);
 
 	float left = 0.f, right = 0.f, top = 0.f, bottom = 0.f;
 	m_pHMD->GetProjectionRaw(vr::Eye_Left, &left, &right, &top, &bottom);
@@ -419,7 +422,7 @@ void VRApplication::SetupCameras()
 	std::cout << "FOV_x = " << glm::degrees(FOV_x) << " degrees, FOV_y = " << glm::degrees(FOV_y) << " degrees" << std::endl;
 
 	// VR output camera: position and model
-	pcOutputCamera = OutputCamera(m_nRenderWidth, m_nRenderHeight, options.viewport, m_mat4ProjectionLeft, m_mat4ProjectionRight, FOV_x, FOV_y);
+	pcOutputCamera = OutputCamera(m_nRenderWidth, m_nRenderHeight, options.viewport, m_mat4ProjectionLeft, m_mat4ProjectionRight, FOV_x, FOV_y, z_near, z_far);
 	// store the relative position of the headset w.r.t. the player area in pcOutputCamera.model[3]
 	glm::mat4 poseMat = glm::mat4(1);
 	UpdateHMDMatrixPose(poseMat);
@@ -537,7 +540,6 @@ void VRApplication::RenderScene(int i, bool isFirstInput)
 			shaders.shader.use();
 			framebuffers.renderNonFirstInputImage(eye, textures_color[i], textures_depth[i]);
 		}
-		
 	}
 }
 
@@ -587,12 +589,12 @@ void VRApplication::RenderCompanionWindow()
 	}
 }
 
-glm::mat4 VRApplication::GetHMDMatrixProjectionEye(vr::Hmd_Eye nEye)
+glm::mat4 VRApplication::GetHMDMatrixProjectionEye(vr::Hmd_Eye nEye, float z_near, float z_far)
 {
 	if (!m_pHMD)
 		return glm::mat4(0);
 
-	vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(nEye, pcOutputCamera.z_near, pcOutputCamera.z_far);
+	vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(nEye, z_near, z_far);
 
 	return glm::mat4(
 		mat.m[0][0], mat.m[1][0], mat.m[2][0], mat.m[3][0],

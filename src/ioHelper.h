@@ -205,13 +205,15 @@ public:
 	OutputCamera() {}
 
 	// only used for VR mode
-	OutputCamera(int width, int height, OutputCamera viewport, glm::mat4 projectionLeft, glm::mat4 projectionRight, float FOV_x, float FOV_y)
+	OutputCamera(int width, int height, OutputCamera viewport, glm::mat4 projectionLeft, glm::mat4 projectionRight, float FOV_x, float FOV_y, float z_near, float z_far)
 		: res_x(width)
 		, res_y(height)
 		, projectionLeft(projectionLeft)
 		, projectionRight(projectionRight)
 		, FOV_x(FOV_x)
-		, FOV_y(FOV_y){
+		, FOV_y(FOV_y)
+		, z_near(z_near)
+		, z_far(z_far){
 		isVR = true;
 		pos = viewport.pos;
 		rot = viewport.rot;
