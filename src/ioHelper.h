@@ -223,8 +223,6 @@ public:
 		model = viewport.model;
 		view = viewport.view;
 		projection = viewport.projection;
-		z_near = 0.1f;
-		z_far = 1020.0f;
 	}
 
 	OutputCamera(nlohmann::json params) {
