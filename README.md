@@ -59,6 +59,20 @@ A paper on this software tool is currently being written/evaluated. Instructions
 
 ## Cite us
 
-We do not have an official citation ready yet. 
+Our paper was published in [Multimedia Tools and Applications (MTAP) by Springer](https://link.springer.com/article/10.1007/s11042-023-16250-8). The [read-only published version](https://rdcu.be/dkfJz) can be found online as part of the Springer Nature Content Sharing Initiative.
+
+To cite the paper:
+```
+@article{opendibr2023,
+  author = {Artois, Julie and Courteaux, Martijn and Wallendael, Glenn and Lambert, Peter},
+  year = {2023},
+  month = {08},
+  pages = {},
+  title = {OpenDIBR: Open Real-Time Depth-Image-Based renderer of light field videos for VR},
+  journal = {Multimedia Tools and Applications},
+  publisher = {Springer}
+  doi = {10.1007/s11042-023-16250-8}
+}
+```
 
 Dataset and paper by [IDLab MEDIA](https://media.idlab.ugent.be/).
