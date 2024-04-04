@@ -67,7 +67,8 @@ To cite the paper:
   author = {Artois, Julie and Courteaux, Martijn and Wallendael, Glenn and Lambert, Peter},
   year = {2023},
   month = {08},
-  pages = {},
+  pages = {25797--25815},
+  volume = {83}
   title = {OpenDIBR: Open Real-Time Depth-Image-Based renderer of light field videos for VR},
   journal = {Multimedia Tools and Applications},
   publisher = {Springer}
