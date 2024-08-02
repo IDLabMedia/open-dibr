@@ -149,7 +149,8 @@ Application::Application(Options options, FpsMonitor* fpsMonitor, std::vector<In
 	, options(options)
 	, fpsMonitor(fpsMonitor)
 	, inputCameras(inputCameras)
-	, outputCameras(outputCameras) {
+	, outputCameras(outputCameras)
+	, cameraSpeed(options.cameraSpeed){
 	cuContext = new CUcontext();
 };
 

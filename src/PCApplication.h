@@ -52,11 +52,11 @@ bool PCApplication::HandleUserInput()
 			}
 			else if (sdlEvent.key.keysym.sym == SDLK_v)
 			{
-				cameraSpeed += 0.001f;
+				cameraSpeed += cameraSpeed * 0.1f;
 			}
 			else if (sdlEvent.key.keysym.sym == SDLK_c)
 			{
-				cameraSpeed = std::max(cameraSpeed - 0.001f, 0.001f);
+				cameraSpeed = std::max(cameraSpeed * 0.9f, 0.001f);
 			}
 			else if (sdlEvent.key.keysym.sym == SDLK_n)
 			{
@@ -140,8 +140,8 @@ bool PCApplication::HandleUserInput()
 			}
 			else {
 				// translation
-				movement.x = -deltaX * 0.005f;
-				movement.y = deltaY * 0.005f;
+				movement.x = -deltaX * 0.05f * cameraSpeed;
+				movement.y = deltaY * 0.05f * cameraSpeed;
 			}
 		}
 		else if (sdlEvent.type == SDL_MOUSEWHEEL)
@@ -153,7 +153,7 @@ bool PCApplication::HandleUserInput()
 				}
 				else {
 					// translation
-					movement.z -= 0.1f;
+					movement.z -= cameraSpeed * 6;
 				}
 			}
 			else if (sdlEvent.wheel.y < 0) // scroll down
@@ -163,7 +163,7 @@ bool PCApplication::HandleUserInput()
 				}
 				else {
 					// translation
-					movement.z += 0.1f;
+					movement.z += cameraSpeed * 6;
 				}
 			}
 		}

@@ -34,6 +34,7 @@ public:
 	unsigned int SCR_HEIGHT = 1080;                   // height in pixels of the SDL window
 
 	glm::vec3 backgroundColor = glm::vec3(0.5f, 0.5f, 0.5f); // glClearColor
+	float cameraSpeed = 0.01f;
 
 	bool saveOutputImages = false;  // if true, the output cameras from the "inputJsonPath" file are rendered one by one and the results are saved to disk as .yuv files
 	int outputNrFrames = 1;
@@ -104,6 +105,7 @@ public:
 		options.add_options("Output camera settings")
 			// output camera
 			("background", "The RGB color of the background, as 3 ints in [0,255] (default: 128,128,128)", cxxopts::value<std::vector<int>>())
+			("cam_speed", "The speed at which the GUI camera moves around (default: 0.01f)", cxxopts::value<float>()->default_value("0.01f"))
 			;
 
 		cxxopts::ParseResult result = options.parse(argc, argv);
@@ -129,6 +131,14 @@ public:
 			}
 			if (backgroundColor.x < 0 || backgroundColor.x > 1 || backgroundColor.y < 0 || backgroundColor.y > 1 || backgroundColor.z < 0 || backgroundColor.z > 1) {
 				std::cout << "Error: -b or --background needs to be followed by 3 ints that lie within [0,255]" << std::endl;
+				exit(-1);
+			}
+		}
+
+		if (result.count("cam_speed")) {
+			cameraSpeed = result["cam_speed"].as<float>();
+			if (cameraSpeed <= 0) {
+				std::cout << "Error: --cam_speed needs to be > 0" << std::endl;
 				exit(-1);
 			}
 		}
