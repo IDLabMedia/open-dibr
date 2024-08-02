@@ -29,6 +29,20 @@ void omafToOpenGLRotation(glm::vec3& r) {
 	r = glm::vec3(-r[1], r[0], -r[2]);
 }
 
+void colmapToOpenGLPosition(glm::vec3& v) {
+	v = glm::vec3(-v[0], v[1], v[2]);
+}
+
+void colmapToOpenGLRotation(glm::vec3& r) {
+	r = glm::vec3(-r[0], r[1], r[2]);
+}
+
+enum class AxialSystem {
+	Omaf,
+	Colmap,
+	OpenGL,
+};
+
 enum class Projection {
 	Perspective,
 	Equirectangular,
@@ -65,7 +79,7 @@ public:
 
 	InputCamera() {}
 
-	InputCamera(nlohmann::json params, std::string directory) {
+	InputCamera(nlohmann::json params, std::string directory, AxialSystem axialSystem) {
 		std::string k = ""; // useful for error handling
 		try {
 			k = "NameColor";
@@ -87,8 +101,19 @@ public:
 				(float)params[k][2]
 			);
 			rot = glm::radians(rot);
-			omafToOpenGLPosition(/*out*/pos);
-			omafToOpenGLRotation(/*out*/rot);
+
+			switch (axialSystem) {
+			case AxialSystem::Omaf:
+				omafToOpenGLPosition(/*out*/pos);
+				omafToOpenGLRotation(/*out*/rot);
+				break;
+			case AxialSystem::Colmap:
+				colmapToOpenGLPosition(/*out*/pos);
+				colmapToOpenGLRotation(/*out*/rot);
+				break;
+			default:
+				break;
+			}
 
 			k = "Projection";
 			if (params[k] == "Perspective") {
@@ -225,7 +250,7 @@ public:
 		projection = viewport.projection;
 	}
 
-	OutputCamera(nlohmann::json params) {
+	OutputCamera(nlohmann::json params, AxialSystem axialSystem) {
 		std::string k = ""; // useful for error handling
 		try {
 			k = "NameColor";
@@ -244,8 +269,19 @@ public:
 				(float)params[k][2]
 			);
 			rot = glm::radians(rot);
-			omafToOpenGLPosition(/*out*/pos);
-			omafToOpenGLRotation(/*out*/rot);
+
+			switch (axialSystem) {
+			case AxialSystem::Omaf:
+				omafToOpenGLPosition(/*out*/pos);
+				omafToOpenGLRotation(/*out*/rot);
+				break;
+			case AxialSystem::Colmap:
+				colmapToOpenGLPosition(/*out*/pos);
+				colmapToOpenGLRotation(/*out*/rot);
+				break;
+			default:
+				break;
+			}
 
 			k = "Projection";
 			if(params[k] != "Perspective") {
@@ -316,6 +352,26 @@ bool readInputJson(std::string inputJsonPath, std::string directory, bool findVi
 	}
 	file.close();
 
+	if (!j.contains("Axial_system")) {
+		std::cout << "Error: the input JSON file should contain a key \"Axial_system\" with a value of \"OMAF\", \"COLMAP\" or \"OPENGL\"" << std::endl;
+		return false;
+	}
+	std::string axialsSystemString = j["Axial_system"].get<std::string>();
+	AxialSystem axialSystem = AxialSystem::Omaf;
+	if(axialsSystemString == "OMAF") {
+		axialSystem = AxialSystem::Omaf;
+	}
+	else if (axialsSystemString == "COLMAP") {
+		axialSystem = AxialSystem::Colmap;
+	}
+	else if (axialsSystemString == "OPENGL") {
+		axialSystem = AxialSystem::OpenGL;
+	}
+	else {
+		std::cout << "Error: in input JSON, invalid value for key \"Axial_system\": should be one of \"OMAF\", \"COLMAP\" or \"OPENGL\", but got \""<< axialsSystemString << "\"" << std::endl;
+		return false;
+	}
+
 	if (!j.contains("cameras")) {
 		std::cout << "Error: the input JSON file should contain a key \"cameras\" with a list of cameras as value." << std::endl;
 		return false;
@@ -334,12 +390,12 @@ bool readInputJson(std::string inputJsonPath, std::string directory, bool findVi
 		}
 		if (name == "viewport") {
 			if (findViewport) {
-				viewport = OutputCamera(j["cameras"][i]);
+				viewport = OutputCamera(j["cameras"][i], axialSystem);
 			}
 			foundViewport = true;
 		}
 		else {
-			inputCameras.push_back(InputCamera(j["cameras"][i], directory));
+			inputCameras.push_back(InputCamera(j["cameras"][i], directory, axialSystem));
 		}
 	}
 	j.clear();
@@ -393,9 +449,34 @@ bool readOutputJson(std::string inputJsonPath, /*out*/ std::vector<OutputCamera>
 		return false;
 	}
 
+	if (!j.contains("Axial_system")) {
+		std::cout << "Error: the output JSON file should contain a key \"Axial_system\" with a value of \"OMAF\", \"COLMAP\" or \"OPENGL\"" << std::endl;
+		return false;
+	}
+	std::string axialsSystemString = j["Axial_system"].get<std::string>();
+	AxialSystem axialSystem = AxialSystem::Omaf;
+	if (axialsSystemString == "OMAF") {
+		axialSystem = AxialSystem::Omaf;
+	}
+	else if (axialsSystemString == "COLMAP") {
+		axialSystem = AxialSystem::Colmap;
+	}
+	else if (axialsSystemString == "OPENGL") {
+		axialSystem = AxialSystem::OpenGL;
+	}
+	else {
+		std::cout << "Error: in output JSON, invalid value for key \"Axial_system\": should be one of \"OMAF\", \"COLMAP\" or \"OPENGL\", but got \"" << axialsSystemString << "\"" << std::endl;
+		return false;
+	}
+
+	if (!j.contains("cameras")) {
+		std::cout << "Error: the input JSON file should contain a key \"cameras\" with a list of cameras as value." << std::endl;
+		return false;
+	}
+
 	// make an OutputCamera object for each camera in the json
 	for (int i = 0; i < j["cameras"].size(); i++) {
-		outputCameras.push_back(OutputCamera(j["cameras"][i]));
+		outputCameras.push_back(OutputCamera(j["cameras"][i], axialSystem));
 	}
 	j.clear();
 	return true;
