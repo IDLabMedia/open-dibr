@@ -30,11 +30,11 @@ void omafToOpenGLRotation(glm::vec3& r) {
 }
 
 void colmapToOpenGLPosition(glm::vec3& v) {
-	v = glm::vec3(-v[0], v[1], v[2]);
+	v = glm::vec3(v[0], -v[1], -v[2]);
 }
 
 void colmapToOpenGLRotation(glm::vec3& r) {
-	r = glm::vec3(-r[0], r[1], r[2]);
+	r = glm::vec3(r[0], -r[1], -r[2]);
 }
 
 enum class AxialSystem {

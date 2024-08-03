@@ -58,10 +58,7 @@ void main()
 	}
 	else {
 		// color tex is RGB
-		float r = texture(colorTex, frag.TexCoord).r;
-		float g = texture(colorTex, frag.TexCoord).g;
-		float b = texture(colorTex, frag.TexCoord).b;
-		FragColor = vec4(r, g, b, 1);
+		FragColor = texture(colorTex, frag.TexCoord);
 	}
 	
 	FragAngleAndDepth = vec2(frag.angle, frag.outputDepth);

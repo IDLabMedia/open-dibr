@@ -362,6 +362,11 @@ private:
 			}
 			viewport = outputCameras[0];
 		}
+		if (inputCameras[0].res_x % 4 != 0 || inputCameras[0].res_y % 4 != 0) {
+			std::cout << "Error: the resolution of the cameras should be a multiple of 4 along both dimensions (for OpenGL)" << std::endl;
+			return false;
+		}
+
 		SCR_WIDTH = viewport.res_x;
 		SCR_HEIGHT = viewport.res_y;
 		if (SCR_WIDTH < 1 || SCR_WIDTH > 8192 || SCR_HEIGHT < 1 || SCR_HEIGHT > 8192) {
