@@ -4,14 +4,14 @@
     {
       "NameColor": "viewport",
       "Position": [
-        -0.140122,
-        0.0,
-        -0.0
+        0.140122,
+        -0.0,
+        0.0
       ],
       "Rotation": [
-        0.0,
-        0.0,
-        -0.0
+        -0.0,
+        -0.0,
+        0.0
       ],
       "Depth_range": [
         0.1,
@@ -35,14 +35,14 @@
       "NameColor": "v00_texture.png",
       "NameDepth": "v00_depth.png",
       "Position": [
-        0.070822,
-        0.069605,
-        -0.0
+        -0.070822,
+        -0.069605,
+        0.0
       ],
       "Rotation": [
-        -0.0,
         0.0,
-        -0.0
+        -0.0,
+        0.0
       ],
       "Depth_range": [
         1.808811,
@@ -68,14 +68,14 @@
       "NameColor": "v01_texture.png",
       "NameDepth": "v01_depth.png",
       "Position": [
-        -0.138494,
-        0.068945,
-        -0.0
+        0.138494,
+        -0.068945,
+        0.0
       ],
       "Rotation": [
-        -0.0,
         0.0,
-        -0.0
+        -0.0,
+        0.0
       ],
       "Depth_range": [
         1.773514,
@@ -101,14 +101,14 @@
       "NameColor": "v02_texture.png",
       "NameDepth": "v02_depth.png",
       "Position": [
-        0.070168,
-        -0.140002,
-        -0.0
+        -0.070168,
+        0.140002,
+        0.0
       ],
       "Rotation": [
-        -0.0,
         0.0,
-        -0.0
+        -0.0,
+        0.0
       ],
       "Depth_range": [
         1.807819,
@@ -134,14 +134,14 @@
       "NameColor": "v03_texture.png",
       "NameDepth": "v03_depth.png",
       "Position": [
-        -0.140481,
-        -0.141201,
-        -0.0
+        0.140481,
+        0.141201,
+        0.0
       ],
       "Rotation": [
-        -0.0,
         0.0,
-        -0.0
+        -0.0,
+        0.0
       ],
       "Depth_range": [
         1.786436,
