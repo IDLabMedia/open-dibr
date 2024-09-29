@@ -68,10 +68,10 @@ To cite the paper:
   year = {2023},
   month = {08},
   pages = {25797--25815},
-  volume = {83}
+  volume = {83},
   title = {OpenDIBR: Open Real-Time Depth-Image-Based renderer of light field videos for VR},
   journal = {Multimedia Tools and Applications},
-  publisher = {Springer}
+  publisher = {Springer},
   doi = {10.1007/s11042-023-16250-8}
 }
 ```
